@@ -1,4 +1,4 @@
-Guesser sample python app for google app engine
+<h1>Guesser sample python app for google app engine</h1>
 
 Goal:
 A number guessing game for 2 players.
