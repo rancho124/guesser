@@ -8,18 +8,6 @@ import webapp2
 from models import Player, Turn, GameFactory, GameHelper
 
 
-# class GameHelper:
-#     @staticmethod
-#     def validate_guessed_number(game, number_str):
-#         try:
-#             number = int(number_str)
-#         except ValueError:
-#             return None, 'wrong number format'
-#         if number < game.min_num or number > game.max_num:
-#             return None, 'number out of allowed range for this game: {} to {}'.format(game.min_num, game.max_num)
-#         return number, ''
-
-
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
@@ -72,8 +60,6 @@ PLAYERS_PER_GAME = 2
 
 def get_create_player(game, player_name):
     """
-    :param request:
-    :param game_key:
     :return: (player, '') or (None, err_msg)
     """
     players_query = \
@@ -186,13 +172,3 @@ class TurnHandler(webapp2.RequestHandler):
         turn = Turn(parent=player.key, number=number)
         turn.put()
         self.render_turn_template(result_str)
-
-
-# application = webapp2.WSGIApplication([
-#     # ('/', MainPage),
-#     # ('/sign', Guestbook),
-#     ('/create', CreateHandler),  # e.g. /create?min_num=1&max_num=100&max_turns=5
-#     ('/status', StatusHandler),  # e.g. /status?game_id=ag9kZXZ-eW91ci1hcHAtaWRyEQsSBEdhbWUYgICAgIDA7woM
-#     ('/guess', TurnHandler),  # e.g. guess/?game_id=ag9kZXZ-eW91ci1hcHAtaWRyEQsSBEdhbWUYgICAgIDA7woM&player=james&number=43
-#
-# ], debug=True)
