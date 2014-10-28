@@ -4,24 +4,39 @@
 <head>
 </head>
   <body>
-    <h1>Game details</h1>
-    Creation date: {{ game.date }}<br>
-    Min number: {{ game.min_num }}<br>
-    Max number: {{ game.max_num }}<br>
-    Max turns: {{ game.max_turns }}<br>
-
-    {% if game.winner_name %}
-        <h2>Winner: {{ game.winner_name}}</h2>
+    {% if game_over %}
+        <h1>Game over</h1>
+        {% if game.winner_name %}
+            <h2>Winner is: {{ game.winner_name}}</h2>
+            Correctly guessed target number {{ game.selected_num }}
+        {% else %}
+            <h2>No winner</h2>
+            No player guessed target number {{ game.selected_num }}
+        {% endif %}
+    {% else %}
+        <h1>Game in progress</h1>
     {% endif %}
 
-    <h1>Players ({{ num_players }})</h1>
+    {% if num_players < expected_players %}
+    <h2>Waiting for {{expected_players - num_players}} players to join</h2>
+    {% endif %}
 
+    <h2>Players</h2>
     {% for player in players %}
-      {% if player.name %}
-        <b>{{ player.name }}</b>:
-        <br>
-      {% endif %}
+        {% if player.player %}
+            {% if player.player.name %}
+                <b>{{ player.player.name }}</b>: {{player.turns}} / {{ game.max_turns }} turns
+                <br>
+            {% endif %}
+        {% endif %}
     {% endfor %}
+
+    <h2>Game definition</h2>
+    Players should guess a target number between {{ game.min_num }} and {{ game.max_num }} using up to {{ game.max_turns }} turns
+    <br>
+    <br>
+    Game created: {{ game.date }}
+
 
   </body>
 </html>

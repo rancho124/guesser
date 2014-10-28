@@ -32,16 +32,12 @@ class CreateHandler(webapp2.RequestHandler):
         max_turns_str = self.request.get('max_turns')
         new_game, err_msg = GameFactory.create(min_num_str, max_num_str, max_turns_str)
         if new_game is None:
-            # template_name = 'error.html'
-            # template_values = {'err_msg': err_msg}
             render_error_template(self.response, err_msg)
             return
         new_game_key = new_game.put()
         url_string = new_game_key.urlsafe()
         logger.error("CreatePage.create_game(): new_game_key={}, urlString={}".format(new_game_key, url_string))
-        # template_name = 'game_create_success.html'
-        template_values = {'game_id': url_string}
-        render_template(self.response, 'game_create_success.html', template_values)
+        render_template(self.response, 'game_create_success.html', {'game_id': url_string})
 
 
 def get_game(game_url_str):
@@ -77,6 +73,11 @@ def get_create_player(game, player_name):
     return player, ''
 
 
+def get_turns(player_key):
+    turn_query = Turn.query(ancestor=player_key).order(-Turn.date)
+    return turn_query.count()
+
+
 def find_curr_turn(game):
     player_query = Player.query(ancestor=game.key).order(-Player.date)
     player_keys = player_query.fetch(keys_only=True)
@@ -85,8 +86,9 @@ def find_curr_turn(game):
         return 0
     min_turns = game.max_turns + 10
     for player_key in player_keys:
-        turn_query = Turn.query(ancestor=player_key).order(-Turn.date)
-        min_turns = min(turn_query.count(), min_turns)
+        # turn_query = Turn.query(ancestor=player_key).order(-Turn.date)
+        # min_turns = min(turn_query.count(), min_turns)
+        min_turns = min(get_turns(player_key), min_turns)
     return min_turns
 
 
@@ -98,13 +100,27 @@ class StatusHandler(webapp2.RequestHandler):
             logger.error("no game found. err_msg={}".format(err_msg))
             render_error_template(self.response, err_msg)
             return
+        game_over = False
+        curr_turn = find_curr_turn(game)
+        if curr_turn >= game.max_turns:
+            game_over = True
+        if game.winner_name:
+            game_over = True
         players_query = Player.query(ancestor=game.key).order(-Player.date)
         players = players_query.fetch(PLAYERS_PER_GAME)
         num_players = len(players)
+        extended_players = []
+        for player in players:
+            extended_player = dict(player=player)
+            extended_player['turns'] = get_turns(player.key)
+            extended_players.append(extended_player)
+
         template_values = {
             'game': game,
+            'game_over': game_over,
             'num_players': num_players,
-            'players': players,
+            'expected_players': PLAYERS_PER_GAME,
+            'players': extended_players,
         }
         render_template(self.response, 'status.html', template_values)
 
@@ -113,12 +129,6 @@ class TurnHandler(webapp2.RequestHandler):
     # TODO: change get to post
     # e.g. guess/?game_id=eW91ci1hcHAtaWRyEQsSBEdhbWUYgICAgIDArwoM&player=james&number=43
     def get(self):
-        # try:
-        #     game_key, game = get_game(self.request)
-        # except Exception:
-        #     render_template(self.response, 'error.html',
-        #                     {'err_msg': 'game id does not exist'})
-        #     return
         game, err_msg = get_game(self.request.get('game_id'))
         if game is None:
             # render_template(self.response, 'error.html', {'err_msg': err_msg})
@@ -147,7 +157,7 @@ class TurnHandler(webapp2.RequestHandler):
         curr_player_num_past_turns = turn_query.count()
         logger.error("curr_player_num_past_turns is {}".format(curr_player_num_past_turns))
         if game.winner_name:
-            self.render_turn_template('Game is already over. The winner is {}'.format(game.winner_name))
+            self.render_turn_template('Game is already over. The winner is {}.'.format(game.winner_name))
             return
         if curr_player_num_past_turns >= game.max_turns:
             self.render_turn_template('You have no more turns (max turns = {}).'.format(game.max_turns))
@@ -161,7 +171,7 @@ class TurnHandler(webapp2.RequestHandler):
         if number == game.selected_num:
             game.winner_name = player.name
             game.put()
-            result_str = 'You are the winner. You found the right number ({}) after {} turns'\
+            result_str = 'You are the winner. You found the right number ({}) after {} turns.'\
                 .format(number, curr_player_turn_num)
         elif number > game.selected_num:
             result_str = 'Your number ({}) is bigger than the target (turn {} / {}).'\
