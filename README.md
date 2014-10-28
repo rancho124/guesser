@@ -1,6 +1,6 @@
 <h1>Guesser</h1>
 Sample python app for google app engine.
-This sample app is deployed on google app engine:
+<br>This sample app is deployed on google app engine:
 http://refined-byte-747.appspot.com/
 
 <h2>Goal</h2>
