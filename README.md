@@ -1,12 +1,13 @@
-<h1>Guesser sample python app for google app engine</h1>
+<h1>Guesser</h1>
+Sample python app for google app engine.
 
-Goal:
+<h2>Goal</h2>
 A number guessing game for 2 players.
 
 This sample app is deployed on google app engine:
 http://refined-byte-747.appspot.com/
 
-Steps:
+<h2>Steps</h2>
 1. Create a new game, supplying a range of numbers and a maximum number of turns.
 The service chooses randomly a number in the required range and returns a game id.
 In the next steps 2 players should take turns and guess the number.
