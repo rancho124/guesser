@@ -1,7 +1,8 @@
 import webapp2
-from views import CreateHandler, StatusHandler, TurnHandler
+from views import CreateHandler, StatusHandler, TurnHandler, MainPage
 
 application = webapp2.WSGIApplication([
+    ('/', MainPage),
     # e.g. /create?min_num=1&max_num=100&max_turns=5 ==> returns a new key to be used below
     ('/create', CreateHandler),
     # e.g. /status?game_id=ag9kZXZ-eW91ci1hcHAtaWRyEQsSBEdhbWUYgICAgIDA7woM

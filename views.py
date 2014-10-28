@@ -182,3 +182,9 @@ class TurnHandler(webapp2.RequestHandler):
         turn = Turn(parent=player.key, number=number)
         turn.put()
         self.render_turn_template(result_str)
+
+
+class MainPage(webapp2.RequestHandler):
+    def get(self):
+        render_template(self.response, 'index.html', {})
+        return
