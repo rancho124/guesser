@@ -15,3 +15,22 @@ indexes:
   properties:
   - name: date
     direction: desc
+
+- kind: Player
+  ancestor: yes
+  properties:
+  - name: date
+    direction: desc
+
+- kind: Player
+  ancestor: yes
+  properties:
+  - name: name
+  - name: date
+    direction: desc
+
+- kind: Turn
+  ancestor: yes
+  properties:
+  - name: date
+    direction: desc

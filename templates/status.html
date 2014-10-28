@@ -2,20 +2,27 @@
 {% autoescape true %}
 <html>
 <head>
-  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
 </head>
   <body>
-    <h1>Game details:</h1>
+    <h1>Game details</h1>
     Creation date: {{ game.date }}<br>
     Min number: {{ game.min_num }}<br>
     Max number: {{ game.max_num }}<br>
     Max turns: {{ game.max_turns }}<br>
 
+    {% if game.winner_name %}
+        <h2>Winner: {{ game.winner_name}}</h2>
+    {% endif %}
+
+    <h1>Players ({{ num_players }})</h1>
+
     {% for player in players %}
       {% if player.name %}
         <b>{{ player.name }}</b>:
+        <br>
       {% endif %}
     {% endfor %}
+
   </body>
 </html>
 {% endautoescape %}
