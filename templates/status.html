@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+</head>
+  <body>
+    <h1>Game details:</h1>
+    Creation date: {{ game.date }}<br>
+    Min number: {{ game.min_num }}<br>
+    Max number: {{ game.max_num }}<br>
+    Max turns: {{ game.max_turns }}<br>
+
+    {% for player in players %}
+      {% if player.name %}
+        <b>{{ player.name }}</b>:
+      {% endif %}
+    {% endfor %}
+  </body>
+</html>
+{% endautoescape %}
