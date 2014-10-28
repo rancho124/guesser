@@ -51,3 +51,15 @@ class GameFactory:
                         selected_num=random.randrange(min_num, max_num),
                         max_turns=max_turns)
         return new_game, ''
+
+
+class GameHelper:
+    @staticmethod
+    def validate_guessed_number(game, number_str):
+        try:
+            number = int(number_str)
+        except ValueError:
+            return None, 'wrong number format'
+        if number < game.min_num or number > game.max_num:
+            return None, 'number out of allowed range for this game: {} to {}'.format(game.min_num, game.max_num)
+        return number, ''
